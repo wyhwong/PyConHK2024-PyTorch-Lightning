@@ -1,15 +1,19 @@
-# Template for Python Project
+## Time to Skip Tedious Steps – Spare Efforts with PyTorch Lightning
 
-A template for Python projects. It utilizes [Poetry](https://python-poetry.org) for dependency management and packaging, and [Docker](https://www.docker.com/) for containerization. It also uses [GNU make](https://www.gnu.org/software/make/manual/make.html) for automation of common tasks, and multiple tools for development (for details you may check [README.md](./src/README.md)).
+This is the code repository for demo on usage of PyTorch-lightning. The purpose is for illustration for "Time to Skip Tedious Steps – Spare Efforts with PyTorch Lightning" in PyCon Hong Kong 2024.
 
 ## Usage
 
 ```bash
-git clone https://github.com/wyhwong/pyproj-template.git
-cd pyproj-template
+git clone https://github.com/wyhwong/PyConHK2024-torch-lightning.git
+cd PyConHK2024-torch-lightning
 ```
 
 See [README.md](./src/README.md) for more details.
+
+## Related Resources
+
+- Powerpoint Slides: TBC
 
 ## Author
 [@wyhwong](https://github.com/wyhwong)
