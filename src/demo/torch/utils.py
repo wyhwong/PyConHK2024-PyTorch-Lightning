@@ -14,7 +14,7 @@ def get_optimizer(model: nn.Module) -> torch.optim.Optimizer:
     NOTE: here we just hard code the optimizer to be AdamW with lr=1e-3 for demonstration purposes.
     """
 
-    optim = torch.optim.SGD(model.parameters(), lr=1e-2)
+    optim = torch.optim.AdamW(model.parameters(), lr=1e-2)
     local_logger.info("Optimizer initialized.")
 
     return optim
