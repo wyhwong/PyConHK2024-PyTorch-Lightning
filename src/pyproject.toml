@@ -1,0 +1,61 @@
+[tool.poetry]
+name = "app"
+version = "0.1.0"
+description = ""
+authors = ["wyhwong <wyhwong@link.cuhk.edu.hk>"]
+maintainers = ["wyhwong <wyhwong@link.cuhk.edu.hk>"]
+homepage = "https://github.com/wyhwong/pyproj-template"
+repository = "https://github.com/wyhwong/pyproj-template"
+license = "MIT"
+readme = "README.md"
+keywords = ["python"]
+classifiers=[
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
+[tool.poetry.dependencies]
+python = "^3.11,<3.12"
+tqdm = "^4.66.1"
+cachetools = "^5.3.2"
+tenacity = "^8.2.3"
+ipykernel = "^6.29.4"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.1.1"
+pytest-asyncio = "^0.23.3"
+pytest-cov = "^4.1.0"
+pytest-env = "^1.1.3"
+mypy = "^1.8.0"
+pre-commit = "^3.6.0"
+
+[tool.black]
+line-length = 120
+
+[tool.isort]
+line_length = 120
+include_trailing_comma = true
+lines_after_imports = 2
+
+[tool.bandit]
+exclude_dirs = ["tests",]
+
+[tool.mypy]
+exclude = ["tests",]
+
+[[tool.mypy.overrides]]
+module = "*.*"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+env = [
+    "STREAMING_LOG_LEVEL=30",
+    "FILE_LOG_LEVEL=10",
+    "LOG_FILEPATH=./test_report/runtime.log",
+    "TZ=UTC",
+]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
