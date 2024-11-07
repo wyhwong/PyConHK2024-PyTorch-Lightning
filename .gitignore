@@ -163,3 +163,5 @@ cython_debug/
 
 uml-diagram/
 lightning_logs/
+data/
+models/

@@ -1,30 +1,39 @@
-from typing import Callable, Optional
+from typing import Any, Callable, Optional
 
 import lightning
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 import torchvision
-from sklearn.metrics import confusion_matrix, roc_curve
+from sklearn.metrics import confusion_matrix, precision_score, roc_curve
 from torch import nn
 
 import demo.logger
-from demo.torch.utils import get_optimizer, get_scheduler
 
 
 local_logger = demo.logger.get_logger(__name__)
 
 
-class ResNet(lightning.LightningModule):
+class ResNet18(lightning.LightningModule):
     """ResNet model"""
 
-    def __init__(self, num_classes: int, denorm_fn: Optional[Callable] = None) -> None:
+    def __init__(
+        self,
+        num_classes: int,
+        class_labels: tuple[str, ...],
+        denorm_fn: Optional[Callable] = None,
+        hyperparameters: Optional[dict[str, Any]] = None,
+    ) -> None:
         """Initialize the model"""
 
         super().__init__()
 
+        self.hyparams = hyperparameters
+        self.save_hyperparameters(self.hyparams)
+
         self.denorm_fn = denorm_fn
-        self.resnet = torchvision.models.resnet18(weights="default")
+        self.class_labels = class_labels
+        self.resnet = torchvision.models.resnet18(weights="DEFAULT")
         # Replace the final layer to match the number of classes
         self.resnet.fc = torch.nn.Linear(self.resnet.fc.in_features, num_classes)
 
@@ -36,8 +45,8 @@ class ResNet(lightning.LightningModule):
     def configure_optimizers(self):
         """Configure optimizer and scheduler."""
 
-        optimizer = get_optimizer(self.resnet)
-        scheduler = get_scheduler(optimizer)
+        optimizer = torch.optim.AdamW(self.parameters(), **self.hyparams["optimizer"])
+        scheduler = torch.optim.lr_scheduler.StepLR(optimizer, **self.hyparams["scheduler"])
 
         return ([optimizer], [scheduler])
 
@@ -53,13 +62,7 @@ class ResNet(lightning.LightningModule):
         if batch_idx == 0:
             x_denorm = self.denorm_fn(x) if self.denorm_fn else x
             grid = torchvision.utils.make_grid(x_denorm)
-            # Here we ignore the type, expected message:
-            # "Attribute 'experiment' is not defined for 'Optional[LightningLoggerBase]'"
-            self.logger.experiment.add_image(  # type: ignore
-                "sample_images_train",
-                grid,
-                self.current_epoch,
-            )
+            self.logger.experiment.add_image("sample_images_train", grid, self.current_epoch)
 
         logits = self.forward(x)
         loss = self._loss_fn(logits, y)
@@ -67,6 +70,8 @@ class ResNet(lightning.LightningModule):
 
         acc = (logits.argmax(dim=1) == y).float().mean()
         self.log(name="train_acc", value=acc, on_step=True)
+
+        self.log(name="lr", value=self.trainer.optimizers[0].param_groups[0]["lr"], on_step=True)
 
         return loss
 
@@ -82,20 +87,14 @@ class ResNet(lightning.LightningModule):
         if batch_idx == 0:
             x_denorm = self.denorm_fn(x) if self.denorm_fn else x
             grid = torchvision.utils.make_grid(x_denorm)
-            # Here we ignore the type, expected message:
-            # "Attribute 'experiment' is not defined for 'Optional[LightningLoggerBase]'"
-            self.logger.experiment.add_image(  # type: ignore
-                "sample_images_val",
-                grid,
-                self.current_epoch,
-            )
+            self.logger.experiment.add_image("sample_images_val", grid, self.current_epoch)
 
         logits = self.forward(x)
         loss = self._loss_fn(logits, y)
-        self.log(name="train_loss", value=loss, on_step=True)
+        self.log(name="val_loss", value=loss, on_step=True)
 
         acc = (logits.argmax(dim=1) == y).float().mean()
-        self.log(name="train_acc", value=acc, on_step=True)
+        self.log(name="val_acc", value=acc, on_step=True)
 
         # For roc curve and confusion matrix
         probis = nn.functional.softmax(logits, dim=1)
@@ -118,50 +117,42 @@ class ResNet(lightning.LightningModule):
         y_pred = self._y_val_pred.argmax(dim=1).cpu().numpy()
         self.plot_confusion_matrix(y_true, y_pred)
 
+        precision = precision_score(y_true, y_pred, average="macro", zero_division=0)
+        self.log(name="hp_metric", value=precision, on_epoch=True)
+
         self._y_val_true = torch.tensor([])
         self._y_val_pred = torch.tensor([])
 
-    def plot_roc_curve(self, fpr: np.ndarray, tpr: np.ndarray, class_index: int) -> None:
-        """Plot the ROC curve
-
-        Args:
-            fpr (np.ndarray): The false positive rate
-            tpr (np.ndarray): The true positive rate
-            class_index (int): The class index
-        """
+    def plot_roc_curve(self, fpr: np.ndarray, tpr: np.ndarray, class_idx: int) -> None:
+        """Plot ROC curve"""
 
         plt.figure(figsize=(10, 10))
         plt.plot(fpr, tpr, label=f"AUC = {np.trapz(tpr, fpr):.2f}")
-        plt.plot([0, 1], [0, 1], color="navy", linestyle="--", label="Random")
+        plt.plot([0, 1], [0, 1], color="grey", linestyle="--")
         plt.xlabel("False Positive Rate")
         plt.ylabel("True Positive Rate")
-        plt.title(f"ROC Curve for Class {class_index}")
+        plt.title(f"ROC Curve for Class {class_idx} ({self.class_labels[class_idx]})")
         plt.legend(loc="lower right")
 
-        self.logger.experiment.add_figure(  # type: ignore
-            f"ROC Curve Class {class_index} ({self.__model_config.backbone})",
+        self.logger.experiment.add_figure(
+            f"ROC Curve Class {class_idx} ({self.class_labels[class_idx]})",
             plt.gcf(),
             self.current_epoch,
         )
         plt.close()
 
     def plot_confusion_matrix(self, y_true: np.ndarray, y_pred: np.ndarray) -> None:
-        """Plot the confusion matrix
-
-        Args:
-            y_true (np.ndarray): The true labels
-            y_pred (np.ndarray): The predicted labels
-        """
+        """Plot confusion matrix"""
 
         cm = confusion_matrix(y_true, y_pred)
         plt.figure(figsize=(10, 10))
-        plt.imshow(cm, interpolation="nearest", cmap=plt.cm.Blues)  # type: ignore
-        plt.title(f"Confusion Matrix ({self.__model_config.backbone})")
+        plt.imshow(cm, interpolation="nearest", cmap=plt.cm.Blues)
+        plt.title("Confusion Matrix")
         plt.colorbar()
         tick_marks = np.arange(len(np.unique(y_true)))
-        plt.yticks(tick_marks, tick_marks)  # type: ignore
+        plt.yticks(tick_marks, self.class_labels)
         plt.ylabel("True Label")
-        plt.xticks(tick_marks, tick_marks)  # type: ignore
+        plt.xticks(tick_marks, self.class_labels, rotation=45)
         plt.xlabel("Predicted Label")
 
         # Add text annotations
@@ -175,15 +166,8 @@ class ResNet(lightning.LightningModule):
                 color="white" if cm[i, j] > thresh else "black",
             )
 
-        # Textual log
-        local_logger.info("Confusion Matrix:\n%s", cm)
-
         # Log to TensorBoard
-        self.logger.experiment.add_figure(  # type: ignore
-            "Confusion Matrix",
-            plt.gcf(),
-            self.current_epoch,
-        )
+        self.logger.experiment.add_figure("Confusion Matrix", plt.gcf(), self.current_epoch)
         plt.close()
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
