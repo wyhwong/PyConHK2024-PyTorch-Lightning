@@ -41,8 +41,6 @@ class LinearRegression(lightning.LightningModule):
         x, y = batch
         y_pred = self.forward(x)
         loss = nn.functional.mse_loss(y_pred, y)
-
-        self.log("train_loss", loss)
         return loss
 
     def validation_step(
@@ -55,8 +53,6 @@ class LinearRegression(lightning.LightningModule):
         x, y = batch
         y_pred = self.forward(x)
         loss = nn.functional.mse_loss(y_pred, y)
-
-        self.log("val_loss", loss)
         return loss
 
     def forward(self, x: torch.tensor) -> torch.tensor:
