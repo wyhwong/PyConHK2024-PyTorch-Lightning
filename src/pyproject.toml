@@ -24,6 +24,7 @@ ipykernel = "^6.29.4"
 matplotlib = "^3.9.2"
 seaborn = "^0.13.2"
 scikit-learn = "^1.5.2"
+slack-bolt = "^1.21.2"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.8.0"

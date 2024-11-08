@@ -42,6 +42,8 @@ class ResNet18(lightning.LightningModule):
         self._y_val_pred = torch.tensor([])
         self._loss_fn = nn.CrossEntropyLoss()
 
+        self.best_precision = 0.0
+
     def configure_optimizers(self):
         """Configure optimizer and scheduler."""
 
@@ -118,6 +120,7 @@ class ResNet18(lightning.LightningModule):
         self.plot_confusion_matrix(y_true, y_pred)
 
         precision = precision_score(y_true, y_pred, average="macro", zero_division=0)
+        self.best_precision = max(self.best_precision, precision)
         self.log(name="hp_metric", value=precision, on_epoch=True)
 
         self._y_val_true = torch.tensor([])

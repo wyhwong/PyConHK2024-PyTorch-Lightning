@@ -10,3 +10,4 @@ LOG_DATEFMT = os.getenv("LOG_DATEFMT", "%Y-%m-%dT%H:%M:%SZ")
 
 SLACK_APP_TOKEN: str = os.getenv("SLACK_APP_TOKEN", "")
 SLACK_BOT_TOKEN: str = os.getenv("SLACK_BOT_TOKEN", "")
+SLACK_DEFAULT_CHANNEL_ID: str = os.getenv("SLACK_DEFAULT_CHANNEL_ID", "")
