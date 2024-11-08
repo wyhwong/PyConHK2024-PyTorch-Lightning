@@ -9,10 +9,25 @@ local_logger = demo.logger.get_logger(__name__)
 
 
 class MonitorTrainingOnSlack(Callback):
-    """Monitor training on slack"""
+    """Monitor training on slack
 
-    def __init__(self, slack_client: SlackClient, log_every_n_epoch: int = 1):
-        """Constructor"""
+    This callback will do the following:
+    1. Log precision of model on validation set to Slack every n epochs.
+    2. Stop training if requested (received text messsage "stop" from Slack).
+    """
+
+    def __init__(
+        self,
+        slack_client: SlackClient,
+        log_every_n_epoch: int = 1,
+    ) -> None:
+        """Initialize MonitorTrainingOnSlack
+
+        Args:
+            slack_client (SlackClient): Slack client object.
+            log_every_n_epoch (int, optional): Log the precision to Slack every n epochs.
+                Defaults to 1.
+        """
 
         self._log_every_n_epoch = log_every_n_epoch
         self._slack_client = slack_client

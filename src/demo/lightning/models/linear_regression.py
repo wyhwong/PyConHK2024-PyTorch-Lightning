@@ -10,10 +10,15 @@ local_logger = demo.logger.get_logger(__name__)
 
 
 class LinearRegression(lightning.LightningModule):
-    """Linear Regression Model."""
+    """Linear Regression Model using PyTorch Lightning."""
 
     def __init__(self, in_features: int, out_features: int) -> None:
-        """Initialize the model."""
+        """Initialize linear regression model.
+
+        Args:
+            in_features (int): Number of input features.
+            out_features (int): Number of output features.
+        """
 
         super().__init__()
 

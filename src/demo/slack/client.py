@@ -20,8 +20,15 @@ class SlackClient:
         self,
         slack_app_token: str = demo.env.SLACK_APP_TOKEN,
         slack_bot_token: str = demo.env.SLACK_BOT_TOKEN,
-    ):
-        """Constructor"""
+    ) -> None:
+        """Initialize Slack client
+
+        Args:
+            slack_app_token (str, optional): Slack app token.
+                Defaults to demo.env.SLACK_APP_TOKEN.
+            slack_bot_token (str, optional): Slack bot token.
+                Defaults to demo.env.SLACK_BOT_TOKEN.
+        """
 
         self._app_token = slack_app_token
         self._bot_token = slack_bot_token
@@ -32,13 +39,14 @@ class SlackClient:
         # For training
         self.stop_training = False
 
-    def start_socket_mode(self):
+    def start_socket_mode(self) -> None:
+        """Start socket mode"""
 
         app = App(token=self._bot_token)
 
         @app.event("message")
         def on_message(body):
-            self.handle_message(body["event"])
+            self._handle_message(body["event"])
 
         self._socket_mode_handler = SocketModeHandler(app, self._app_token)
         self._subscriber_thread = Thread(target=self._socket_mode_handler.start, daemon=True)
@@ -50,7 +58,7 @@ class SlackClient:
         if self._subscriber_thread:
             self._subscriber_thread.join(timeout=5)
 
-    def handle_message(self, event: dict[str, Any]):
+    def _handle_message(self, event: dict[str, Any]):
         """Handle message"""
 
         text, user, channel = event["text"], event["user"], event["channel"]
@@ -65,7 +73,13 @@ class SlackClient:
         text: str,
         channel_id: str = demo.env.SLACK_DEFAULT_CHANNEL_ID,
     ):
-        """Post message"""
+        """Post message to Slack
+
+        Args:
+            text (str): Message text.
+            channel_id (str, optional): Channel ID.
+                Defaults to demo.env.SLACK_DEFAULT_CHANNEL_ID.
+        """
 
         local_logger.info("Sending message to Slack: %s", text)
 
@@ -74,12 +88,18 @@ class SlackClient:
 
         local_logger.info("Message sent: %s", is_sent)
 
-    def post_image(
+    def post_attachment(
         self,
         filepath: str,
         channel_id: str = demo.env.SLACK_DEFAULT_CHANNEL_ID,
     ):
-        """Post image"""
+        """Post attachment to Slack
+
+        Args:
+            filepath (str): Path to the file.
+            channel_id (str, optional): Channel ID.
+                Defaults to demo.env.SLACK_DEFAULT_CHANNEL_ID.
+        """
 
         local_logger.info("Sending file to Slack: %s", filepath)
 

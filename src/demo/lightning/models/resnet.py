@@ -15,7 +15,7 @@ local_logger = demo.logger.get_logger(__name__)
 
 
 class ResNet18(lightning.LightningModule):
-    """ResNet model"""
+    """ResNet18 model using PyTorch Lightning."""
 
     def __init__(
         self,
@@ -24,7 +24,16 @@ class ResNet18(lightning.LightningModule):
         denorm_fn: Optional[Callable] = None,
         hyperparameters: Optional[dict[str, Any]] = None,
     ) -> None:
-        """Initialize the model"""
+        """Initialize ResNet18 model.
+
+        Args:
+            num_classes (int): Number of classes.
+            class_labels (tuple[str, ...]): Tuple of class labels.
+            denorm_fn (Optional[Callable], optional): Function to denormalize the input.
+                Defaults to None.
+            hyperparameters (Optional[dict[str, Any]], optional): Hyperparameters for the model.
+                Defaults to None.
+        """
 
         super().__init__()
 

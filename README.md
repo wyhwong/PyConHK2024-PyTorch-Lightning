@@ -15,5 +15,11 @@ See [README.md](./src/README.md) for more details.
 
 - Powerpoint Slides: TBC
 
+- Talk Homepage: [https://pretalx.com/pyconhk2024/talk/UVKEGD/](https://pretalx.com/pyconhk2024/talk/UVKEGD/)
+
+- Talk Video: TBC
+
+- PyCon HK: [https://pycon.hk/](https://pycon.hk/)
+
 ## Author
 [@wyhwong](https://github.com/wyhwong)
