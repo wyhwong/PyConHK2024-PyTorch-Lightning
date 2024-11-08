@@ -1,3 +1,5 @@
+from typing import Callable
+
 import torch
 import torch.utils.data
 from torch import nn
@@ -49,6 +51,7 @@ def train_regression_model(
     val_dataloader: torch.utils.data.DataLoader,
     optimizer: torch.optim.Optimizer,
     scheduler: torch.optim.lr_scheduler._LRScheduler,
+    loss_fn: Callable,
     n_epochs: int,
     device: str = "cuda",
 ) -> None:
@@ -79,7 +82,7 @@ def train_regression_model(
 
             optimizer.zero_grad()
             y_pred = model(x)
-            loss = nn.functional.mse_loss(y_pred, y)
+            loss = loss_fn(y_pred, y)
             loss.backward()
             optimizer.step()
 
