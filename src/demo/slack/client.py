@@ -48,8 +48,7 @@ class SlackClient:
         """Terminate the client"""
 
         if self._subscriber_thread:
-            self._socket_mode_handler.close()
-            self._subscriber_thread.join()
+            self._subscriber_thread.join(timeout=5)
 
     def handle_message(self, event: dict[str, Any]):
         """Handle message"""

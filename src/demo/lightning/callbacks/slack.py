@@ -40,5 +40,7 @@ class MonitorTrainingOnSlack(Callback):
         if self._slack_client.stop_training:
             local_logger.warning("Stop training requested. Training will stop in the end of current epoch.")
             trainer.should_stop = True
+
+            self._slack_client.post_message(f"Training stopped at epoch {current_epoch} due to stop training request.")
             self._slack_client.terminate()
             local_logger.info("Slack client terminated due to stop training request.")
