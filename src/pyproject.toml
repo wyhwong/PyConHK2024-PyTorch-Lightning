@@ -27,7 +27,6 @@ scikit-learn = "^1.5.2"
 slack-bolt = "^1.21.2"
 
 [tool.poetry.group.dev.dependencies]
-mypy = "^1.8.0"
 pre-commit = "^3.6.0"
 
 [tool.poetry.group.cuda.dependencies]
