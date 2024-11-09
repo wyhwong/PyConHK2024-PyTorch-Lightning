@@ -138,7 +138,7 @@ class ResNet18(lightning.LightningModule):
     def plot_roc_curve(self, fpr: np.ndarray, tpr: np.ndarray, class_idx: int) -> None:
         """Plot ROC curve"""
 
-        plt.figure(figsize=(10, 10))
+        plt.figure(figsize=(7, 7))
         plt.plot(fpr, tpr, label=f"AUC = {np.trapz(tpr, fpr):.2f}")
         plt.plot([0, 1], [0, 1], color="grey", linestyle="--")
         plt.xlabel("False Positive Rate")
@@ -157,7 +157,7 @@ class ResNet18(lightning.LightningModule):
         """Plot confusion matrix"""
 
         cm = confusion_matrix(y_true, y_pred)
-        plt.figure(figsize=(10, 10))
+        plt.figure(figsize=(7, 7))
         plt.imshow(cm, interpolation="nearest", cmap=plt.cm.Blues)
         plt.title("Confusion Matrix")
         plt.colorbar()
