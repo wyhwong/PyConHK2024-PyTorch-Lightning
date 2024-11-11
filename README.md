@@ -41,5 +41,9 @@ We will begin with an overview of PyTorch Lightning, discussing the key benefits
 
 - Talk Video: TBC
 
+- PyTorch Lightning: [https://lightning.ai/](https://lightning.ai/)
+
+- PyTorch: [https://pytorch.org/](https://pytorch.org/)
+
 ## Author
 [@wyhwong](https://github.com/wyhwong)
