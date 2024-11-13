@@ -35,9 +35,9 @@ We will begin with an overview of PyTorch Lightning, discussing the key benefits
 
 ## Related Resources
 
-- Powerpoint Slides: TBC
+- Powerpoint Slides: [View on OneDrive](https://1drv.ms/p/c/7adfdf652c41fb6c/EZ-Bd0i38FJKmzw5_ZYT6UIBDWWKBVsM30SlBTa2R2Cx1A)
 
-- Talk Homepage: [https://pretalx.com/pyconhk2024/talk/UVKEGD/](https://pretalx.com/pyconhk2024/talk/UVKEGD/)
+- Talk Homepage: [Pretalx](https://pretalx.com/pyconhk2024/talk/UVKEGD/)
 
 - Talk Video: TBC
 
