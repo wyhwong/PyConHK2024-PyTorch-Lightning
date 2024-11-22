@@ -1,6 +1,6 @@
 ## Time to Skip Tedious Steps – Spare Efforts with PyTorch Lightning
 
-This is the code repository for demo on usage of PyTorch Lightning. The purpose is for illustration for "Time to Skip Tedious Steps – Spare Efforts with PyTorch Lightning" in PyCon Hong Kong 2024.
+This repository demonstrates the usage of PyTorch Lightning, designed to support the talk "Time to Skip Tedious Steps – Spare Efforts with PyTorch Lightning" at PyCon Hong Kong 2024. The goal is to showcase how PyTorch Lightning can simplify and accelerate deep learning workflows, allowing developers to focus on innovation rather than boilerplate code.
 
 <div align="center">
 
