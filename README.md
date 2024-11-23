@@ -39,6 +39,8 @@ We will begin with an overview of PyTorch Lightning, discussing the key benefits
 
 - Talk Homepage: [Pretalx](https://pretalx.com/pyconhk2024/talk/UVKEGD/)
 
+- Studio Template: [lightning.ai](https://lightning.ai/wyhwong-dev/studios/pycon-hk-2024-lightning-demo)
+
 - Talk Video: TBC
 
 - PyTorch Lightning: [https://lightning.ai/](https://lightning.ai/)
